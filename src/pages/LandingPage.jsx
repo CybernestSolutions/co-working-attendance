@@ -57,7 +57,7 @@ export default function LandingPage() {
 
         {/* Title */}
         <h1 className="text-base sm:text-lg font-extrabold text-gray-900 leading-tight mb-1">
-          <span className="text-[#6D0C22]">Status</span> to{" "}
+          <span className="text-[#6D0C22]">Status</span>{" "}
           <span className="text-[#0E386B]">Dashboard</span>
         </h1>
         <p className="text-[11px] sm:text-sm text-gray-600 leading-snug mb-5">
