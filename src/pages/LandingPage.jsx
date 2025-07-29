@@ -23,17 +23,17 @@ export default function LandingPage() {
   };
 
   const handleNext = async () => {
-    // ✅ If venue is selected → show Venue Modal
+    //  If venue is selected → show Venue Modal
     if (selected === "venue") {
       setIsVenueModalOpen(true);
       return;
     }
 
-    // ✅ If Co-working is selected → check network first
+    
     if (selected === "coworking") {
       setLoading(true);
       try {
-        const res = await axios.get("https://tbido.flow.cybernestsolution.com/check-network");
+        const res = await axios.get("http://192.168.0.191:3000/api/check-network");
 
         if (res.data?.connected) {
           navigate("/logbook"); 
@@ -64,21 +64,28 @@ export default function LandingPage() {
           View the current status and updates of <br /> your incubatee application.
         </p>
 
-        {/* Co-Working */}
-        <button
-          onClick={() => handleSelect("coworking")}
-          className={`mb-4 cursor-pointer w-full max-w-[333px] rounded-4xl overflow-hidden shadow-md hover:shadow-lg transition ${
-            selected === "coworking"
-              ? "border-3 border-[#0E386B]"
-              : "border border-transparent"
-          }`}
-        >
-          <img
-            src={coWorking}
-            alt="Access Co-Working Space"
-            className="w-full h-auto rounded-2xl"
-          />
-        </button>
+          {/* Co-Working */}
+          <button
+            onClick={() => handleSelect("coworking")}
+            className={`mb-2 cursor-pointer w-full max-w-[333px] rounded-4xl overflow-hidden shadow-md hover:shadow-lg transition ${
+              selected === "coworking"
+                ? "border-3 border-[#0E386B]"
+                : "border border-transparent"
+            }`}
+          >
+            <img
+              src={coWorking}
+              alt="Access Co-Working Space"
+              className="w-full h-auto rounded-2xl"
+            />
+          </button>
+
+          {/*Info note for coworking selection */}
+          {selected === "coworking" && (
+            <div className="mb-4 max-w-[333px] w-full bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-md text-xs shadow-sm transition-opacity duration-300">
+              <strong>Heads up!</strong> Please make sure you're connected to the <span className="font-semibold">TBIDO WiFi</span> before proceeding to access the co-working space.
+            </div>
+          )}
 
         {/* Venue */}
         <button

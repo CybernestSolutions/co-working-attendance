@@ -5,7 +5,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import puplogo from "../assets/images/LandingPage/puplogo.png";
 import cybernest from "../assets/images/LandingPage/cybernest.png";
 import flow from "../assets/images/LandingPage/flow.png";
-import qrCode from "../assets/images/LandingPage/qr.jpg"; // ✅ Replace with your actual QR image
+import qrCode from "../assets/images/LandingPage/qr.svg"; // ✅ Replace with your actual QR image
 
 export default function WrongNetworkModal({ isOpen, onClose }) {
   return (
@@ -43,16 +43,16 @@ export default function WrongNetworkModal({ isOpen, onClose }) {
               </button>
 
               {/* Logo */}
-              <img src={puplogo} alt="TBIDO Logo" className="h-8 mx-auto mb-3" />
+              <img src={puplogo} alt="TBIDO Logo" className="h-15 mx-auto mb-3" />
 
               {/* Title */}
-              <h2 className="text-lg font-extrabold text-red-600 mb-1">
-                Wrong Network!
-              </h2>
+                <h2
+                  className="text-2xl font-[montserrat] sm:text-2xl px-6 font-extrabold bg-gradient-to-r from-[#6D0C22] via-[#3A4C8A] to-[#0E386B] bg-clip-text text-transparent mb-4"
+                >Oops Wrong Network!
+                </h2>
               <p className="text-sm text-gray-600 mb-4">
                 Make sure you are connected to the <br />
-                <span className="font-semibold text-[#0E386B]">
-                  Local TBIDO Network
+                <span className="font-semibold text-[#0E386B]">TBIDO Wi-Fi
                 </span>{" "}
                 before logging in.
               </p>
@@ -61,7 +61,7 @@ export default function WrongNetworkModal({ isOpen, onClose }) {
               <img src={qrCode} alt="QR Code" className="w-40 mx-auto mb-3" />
               <p className="text-xs text-gray-500">
                 Scan this QR Code to connect to the <br />
-                "Local TBIDO Network"
+                "TBIDO Wi-Fi"
               </p>
 
               {/* Powered By */}

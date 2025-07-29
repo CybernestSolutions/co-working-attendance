@@ -9,18 +9,18 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const verifyNetwork = async () => {
       try {
-        const res = await axios.get("https://tbido.flow.cybernestsolution.com/check-network");
+        const res = await axios.get("http://192.168.0.191:3000/api/check-network");
 
         if (res.data?.connected) {
           setAllowed(true); 
         } else {
           setAllowed(false);
-          navigate("/wagmagbypass"); 
+          navigate("/404"); 
         }
       } catch (err) {
         console.error("Network verification failed:", err);
         setAllowed(false);
-        navigate("/wagmagbypass");
+        navigate("/404");
       }
     };
 
@@ -30,7 +30,7 @@ export default function ProtectedRoute({ children }) {
   if (allowed === null) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-600 text-sm">Checking Network Access...</p>
+        <p className="text-gray-600 font-[montserrat] text-md">Checking Network Access...</p>
       </div>
     );
   }

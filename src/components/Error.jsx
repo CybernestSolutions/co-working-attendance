@@ -48,18 +48,17 @@ export default function ErrorModal({ isOpen, onClose }) {
 
                 {/* Gradient Text */}
                 <h2
-                  className="text-xl sm:text-2xl px-6 font-extrabold bg-gradient-to-r from-[#6D0C22] via-[#3A4C8A] to-[#0E386B] bg-clip-text text-transparent mb-4"
-                >
-                  Oops! It looks like something went wrong.
+                  className="text-2xl font-[montserrat] sm:text-2xl px-6 font-extrabold bg-gradient-to-r from-[#6D0C22] via-[#3A4C8A] to-[#0E386B] bg-clip-text text-transparent mb-4"
+                >Coming Soon!
                 </h2>
 
                 {/* ✅ Error Image (moved below the heading) */}
                 <img src={errorImage} alt="Error" className="w-36 mx-auto mb-4" />
 
                 {/* Description */}
-                <p className="text-sm sm:text-base text-gray-600 mb-4">
-                  Our team is working on resolving the issue. Please try again later or
-                  contact support.
+                <p className="text-sm sm:text-sm text-gray-600 mb-4">
+                 We're putting the final touches on something exciting!
+                Thanks for your patience.
                 </p>
 
                 {/* Powered By */}

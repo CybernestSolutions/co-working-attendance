@@ -38,7 +38,7 @@ export default function LogBook() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://tbido.flow.cybernestsolution.com/check-login-status",
+        "https://tbidoflowapi.azurewebsites.net/check-login-status",
         { email: formData.email },
         { headers: { "Cache-Control": "no-cache" } }
       );

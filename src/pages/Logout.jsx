@@ -1,7 +1,6 @@
-import { useState, Fragment } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Dialog, Transition } from "@headlessui/react";
 
 import puplogo from "../assets/images/LandingPage/puplogo.png";
 import cybernest from "../assets/images/LandingPage/cybernest.png";
@@ -13,7 +12,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+
+import ThankYouModal from "../components/ThankYouModal";
 
 export default function Logout() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export default function Logout() {
 
     setLoading(true);
     try {
-      const res = await axios.post("https://tbido.flow.cybernestsolution.com/logout", {
+      const res = await axios.post("https://tbidoflowapi.azurewebsites.net/logout", {
         email: emailToUse,
         resources: allResources.join(", "),
         feedback: formData.feedback,
@@ -82,7 +83,7 @@ export default function Logout() {
       if (status === "already_logged_out") {
         toast.success(message);
       } else {
-        toast.success("You have successfully logged out.");
+        ""
       }
 
       setIsModalOpen(true);
@@ -101,9 +102,10 @@ export default function Logout() {
 
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex flex-col items-center justify-between py-8">
-      {/* Top Section */}
+      {/* Toasts */}
       <ToastContainer position="top-center" autoClose={3000} />
 
+      {/* Top Content */}
       <div className="w-full max-w-[360px] flex flex-col items-center text-center">
         <img src={puplogo} alt="TBIDO Logo" className="h-12 mb-4" />
         <h1 className="text-lg font-extrabold bg-gradient-to-r from-[#6D0C22] to-[#0E386B] bg-clip-text text-transparent mb-1">
@@ -113,7 +115,7 @@ export default function Logout() {
           View the current status and updates of <br /> your incubatee application.
         </p>
 
-        {/* Email */}
+        {/* Email Field */}
         <TextField
           type="email"
           name="email"
@@ -127,11 +129,10 @@ export default function Logout() {
           className="max-w-[333px] font-[Montserrat]"
         />
 
-        {/* Resources Checkboxes */}
-   
-       <div className="w-full max-w-[333px] text-left text-sm font-semibold mb-1 font-[Montserrat]">
-        Resources Used:
-      </div>
+        {/* Resources */}
+        <div className="w-full max-w-[333px] text-left text-sm font-semibold mb-1 font-[Montserrat]">
+          Resources Used:
+        </div>
         <FormGroup className="w-full max-w-[333px]">
           {resourceOptions.map((option) => (
             <FormControlLabel
@@ -148,7 +149,7 @@ export default function Logout() {
             />
           ))}
         </FormGroup>
- 
+
         {/* Other Resource */}
         <TextField
           name="otherResource"
@@ -186,7 +187,7 @@ export default function Logout() {
         </button>
       </div>
 
-      {/* Powered By */}
+      {/* Footer */}
       <div className="flex flex-col items-center mt-8 space-y-1">
         <p className="text-[10px] text-gray-400">Powered By:</p>
         <div className="flex items-center space-x-2">
@@ -195,38 +196,13 @@ export default function Logout() {
         </div>
       </div>
 
-      {/* Modal */}
-      <Transition appear show={isModalOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/70" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="bg-white rounded-2xl p-6 text-center shadow-xl w-full max-w-sm">
-              <h3 className="text-xl font-bold text-[#6D0C22] mb-2">Thank you!
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                You have successfully logged out.
-              </p>
-              <button
-                className="bg-gradient-to-r from-[#6D0C22] to-[#0E386B] text-white px-4 py-2 rounded-lg hover:opacity-90"
-                onClick={closeModal}
-              >
-                Close
-              </button>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      </Transition>
+      {/* Reusable Thank You Modal */}
+      <ThankYouModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Thank you!"
+        message="You have successfully logged out."
+      />
     </div>
   );
 }
