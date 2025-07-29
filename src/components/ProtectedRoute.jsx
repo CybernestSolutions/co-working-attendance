@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const verifyNetwork = async () => {
       try {
-        const res = await axios.get("https://192.168.0.191:3000/api/check-network");
+        const res = await axios.get("https://tbidoflowapi.azurewebsites.net/api/check-network");
 
         if (res.data?.connected) {
           setAllowed(true); 
