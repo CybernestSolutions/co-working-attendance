@@ -33,7 +33,7 @@ export default function LandingPage() {
     if (selected === "coworking") {
       setLoading(true);
       try {
-        const res = await axios.get("http://192.168.0.191:3000/api/check-network");
+        const res = await axios.get("https://192.168.0.191:3000/api/check-network");
 
         if (res.data?.connected) {
           navigate("/logbook"); 
