@@ -57,13 +57,12 @@ export default function LandingPage() {
 
         {/* Title */}
         <h1 className="text-base sm:text-lg font-extrabold text-gray-900 leading-tight mb-1">
-          <span className="text-[#6D0C22]">Welcome</span> to{" "}
-          <span className="text-[#0E386B]">TBIDO!</span>
+          <span className="text-[#6D0C22]">Status</span> to{" "}
+          <span className="text-[#0E386B]">Dashboard</span>
         </h1>
         <p className="text-[11px] sm:text-sm text-gray-600 leading-snug mb-5">
-          View the current status and updates of <br /> your incubatee application.
+          Easily track your access, attendance, and reservations as part of your incubatee journey.
         </p>
-
           {/* Co-Working */}
           <button
             onClick={() => handleSelect("coworking")}
