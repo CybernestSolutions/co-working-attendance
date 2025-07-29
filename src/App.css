@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* ✅ Global font & gradient variables */
+:root {
+  --font-montserrat: 'Montserrat', sans-serif;
+  --gradient-cyberflow: linear-gradient(to right, #6D0C22, #0E386B);
+}
+
+body {
+  font-family: var(--font-montserrat);
+}
+
