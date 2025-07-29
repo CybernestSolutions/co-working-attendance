@@ -58,7 +58,7 @@ export default function WrongNetworkModal({ isOpen, onClose }) {
               </p>
 
               {/* QR Code */}
-              <img src={qrCode} alt="QR Code" className="w-40 mx-auto mb-3" />
+              <img src={qrCode} alt="QR Code" className="w-60 mx-auto mb-3" />
               <p className="text-xs text-gray-500">
                 Scan this QR Code to connect to the <br />
                 "TBIDO Wi-Fi"
