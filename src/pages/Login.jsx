@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-
-import puplogo from "../assets/images/LandingPage/puplogo.png";
-import cybernest from "../assets/images/LandingPage/cybernest.png";
-import flow from "../assets/images/LandingPage/flow.png";
-
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-
+import SuccessModal from "../components/SucessModal"; // New modal import
+import puplogo from "../assets/images/LandingPage/puplogo.png";
+import cybernest from "../assets/images/LandingPage/cybernest.png";
+import flow from "../assets/images/LandingPage/flow.png";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -23,6 +20,8 @@ export default function Login() {
     terms: false,
   });
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // state to control the new modal
+  const [sessionId, setSessionId] = useState(""); // store session_id for redirection
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,18 +60,17 @@ export default function Login() {
 
       const { status, message, session_id } = res.data;
 
+      setSessionId(session_id);
+
+      // Trigger the modal upon success
+      setIsModalOpen(true);
+
       if (status === "already_logged_in") {
-        toast.sucess(message);
-        navigate("/logout", {
-          state: {
-            email: formData.email || prefilledEmail,
-            sessionId: session_id,
-          },
-        });
+        toast.success(message);
       } else {
         toast.success("Successfully logged in!");
-        setTimeout(() => navigate("/"), 3000);
       }
+
     } catch (err) {
       console.error("Login failed:", err);
       const errorMessage = err?.response?.data?.message || "Login failed. Please try again.";
@@ -82,10 +80,21 @@ export default function Login() {
     }
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    navigate("/logout", {
+      state: {
+        email: formData.email || prefilledEmail,
+        sessionId: sessionId,
+      },
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex flex-col items-center justify-between py-8">
       {/* Top Section */}
       <ToastContainer position="top-center" autoClose={3000} />
+
       <div className="w-full max-w-[360px] flex flex-col items-center text-center">
         {/* Logo */}
         <img src={puplogo} alt="TBIDO Logo" className="h-15 mb-4" />
@@ -155,7 +164,7 @@ export default function Login() {
           />
         </Box>
 
-        {/*Terms */}
+        {/* Terms */}
         <label className="flex items-start text-left w-full max-w-[333px] text-xs text-gray-600 mb-5">
           <input
             type="checkbox"
@@ -193,7 +202,7 @@ export default function Login() {
         </button>
       </div>
 
-      {/* ✅ Powered By */}
+      {/* Powered By */}
       <div className="flex flex-col items-center mt-8 space-y-1">
         <p className="text-[10px] text-gray-400">Powered By:</p>
         <div className="flex items-center space-x-2">
@@ -201,6 +210,14 @@ export default function Login() {
           <img src={flow} alt="Flow" className="h-4" />
         </div>
       </div>
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="You're already logged in!"
+        message="Redirecting you to logout to complete your session."
+      />
     </div>
   );
 }

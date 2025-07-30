@@ -57,44 +57,47 @@ export default function Logout() {
     }));
   };
 
-  const handleLogout = async () => {
-    const emailToUse = formData.email || prefilledEmail;
+const handleLogout = async () => {
+  const emailToUse = formData.email || prefilledEmail;
 
-    if (!emailToUse) {
-      toast.error("Email is required!");
-      return;
+  if (!emailToUse) {
+    toast.error("Email is required!");
+    return;
+  }
+
+  const allResources = [...formData.resources];
+  if (formData.otherResource.trim() !== "") {
+    allResources.push(formData.otherResource.trim());
+  }
+
+  //  Require at least one resource (including custom ones)
+  if (allResources.length === 0) {
+    toast.error("Please select or specify at least one resource used.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const res = await axios.post("https://tbidoflowapi.azurewebsites.net/logout", {
+      email: emailToUse,
+      resources: allResources.join(", "),
+      feedback: formData.feedback,
+    });
+
+    const { message, status } = res.data;
+
+    if (status === "already_logged_out") {
+      toast.success(message);
     }
 
-    const allResources = [...formData.resources];
-    if (formData.otherResource.trim() !== "") {
-      allResources.push(formData.otherResource.trim());
-    }
-
-    setLoading(true);
-    try {
-      const res = await axios.post("https://tbidoflowapi.azurewebsites.net/logout", {
-        email: emailToUse,
-        resources: allResources.join(", "),
-        feedback: formData.feedback,
-      });
-
-      const { message, status } = res.data;
-
-      if (status === "already_logged_out") {
-        toast.success(message);
-      } else {
-        ""
-      }
-
-      setIsModalOpen(true);
-    } catch (err) {
-      console.error("Logout failed:", err);
-      toast.error("Logout failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setIsModalOpen(true);
+  } catch (err) {
+    console.error("Logout failed:", err);
+    toast.error("Logout failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   const closeModal = () => {
     setIsModalOpen(false);
     navigate("/");
@@ -194,7 +197,7 @@ export default function Logout() {
           <img src={cybernest} alt="Cybernest Solutions" className="h-12" />
           <img src={flow} alt="Flow" className="h-4" />
         </div>
-      </div>
+      </div>x``
 
       {/* Reusable Thank You Modal */}
       <ThankYouModal
