@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import Lottie from "lottie-react";
 
 // Assets
+import logo from "../assets/images/LandingPage/puplogo.png";
 import successAnimation from "../assets/JSON/success-check.json";
 import checkTick from "../assets/images/LandingPage/tick.svg";
 import cybernest from "../assets/images/LandingPage/cybernest.png";
@@ -36,6 +37,10 @@ export default function SuccessModal({ isOpen, onClose, title, message }) {
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="bg-white rounded-2xl text-center shadow-2xl w-full max-w-xs overflow-hidden">
+          {/* Logo */}
+            <div className="pt-6">
+            <img src={logo} alt="TBIDO Logo" className="h-14 mx-auto mb-2" />
+            </div>
             {/* Lottie Animation + Tick */}
             <div className="relative w-42 h-42 mx-auto mb-4">
               {/* Lottie Animation */}

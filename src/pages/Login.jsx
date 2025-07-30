@@ -82,7 +82,7 @@ export default function Login() {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    navigate("/logout", {
+    navigate("/", {
       state: {
         email: formData.email || prefilledEmail,
         sessionId: sessionId,
