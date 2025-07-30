@@ -57,7 +57,7 @@ export default function LandingPage() {
         <img src={puplogo} alt="TBIDO Logo" className="h-12 sm:h-14 mb-4" />
 
         {/* Title */}
-        <h1 className="text-base sm:text-lg font-extrabold text-gray-900 leading-tight mb-1">
+        <h1 className="text-lg sm:text-lg font-extrabold text-gray-900 leading-tight mb-1">
           <span className="text-[#6D0C22]">Status</span>{" "}
           <span className="text-[#0E386B]">Dashboard</span>
         </h1>
