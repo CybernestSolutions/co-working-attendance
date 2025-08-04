@@ -34,7 +34,7 @@ export default function LandingPage() {
 
       setLoading(true);
       try {
-        const res = await axios.get("https://tbidoflowapi.azurewebsites.net/api/check-network");
+        const res = await axios.get("https://tbidoflowapi.azurewebsites.net/check-network");
 
         if (res.data?.connected) {
           navigate("/logbook"); 
@@ -62,7 +62,8 @@ export default function LandingPage() {
           <span className="text-[#0E386B]">Dashboard</span>
         </h1>
         <p className="text-[11px] sm:text-sm text-gray-600 leading-snug mb-5">
-          Easily track your access, attendance, and reservations as part of your incubatee journey.
+          Easily track your access, attendance, and reser
+          vations as part of your incubatee journey.
         </p>
           {/* Co-Working */}
           <button
