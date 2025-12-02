@@ -21,15 +21,20 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Vite App
+      - name: Build Frontend
         run: npm run build
 
-      - name: Zip artifact for deployment
-        run: zip -r release.zip . -x "*.git*"
+      # ⭐ REQUIRED STEP — Azure Login ⭐
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_923E7A0117F346D1A3738AD5257515BAB }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_67D1A53F1E434403B488555DF5A585E84 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_20F890A0A75D443C9063268B1A7DFE80 }}
 
+      # 📌 Deploy to Azure Web App (Linux)
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "tbido-flow-frontend-dev"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: release.zip
+          app-name: tbido-flow-frontend-dev
+          package: ./dist
