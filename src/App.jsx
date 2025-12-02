@@ -4,9 +4,10 @@ import LandingPage from "./pages/LandingPage";
 import LogBook from "./pages/LogBook";
 import Login from "./pages/Login";
 import Logout from "./pages/Logout";
+import Admin from "./pages/Admin"; // ✅ ADD THIS
 import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Loader from "./components/Loader"; 
+import Loader from "./components/Loader";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -18,9 +19,11 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen">
-      {loading && <Loader />} {/* ✅ Correct component */}
+      {loading && <Loader />}
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
+
         <Route
           path="/logbook"
           element={
@@ -29,8 +32,13 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* ✅ NEW ADMIN ROUTE */}
+        <Route path="/admin" element={<Admin />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
