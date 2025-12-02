@@ -29,52 +29,50 @@ export default function Admin() {
   };
 
   const handleLogin = async () => {
-    if (!formData.username) {
-      toast.warning("Username is required!");
-      return;
-    }
-
-    if (!formData.username.includes("@gmail.com")) {
-      toast.error("Username must be a valid Gmail address.");
-      return;
-    }
-
-    if (!formData.password) {
-      toast.warning("Password is required!");
-      return;
-    }
+    if (!formData.username) return toast.warning("Username is required!");
+    if (!formData.password) return toast.warning("Password is required!");
 
     setLoading(true);
 
-    // TODO: Replace with real API
-    setTimeout(() => {
-      toast.success("Admin logged in! (Placeholder)");
-      setLoading(false);
-    }, 1000);
+    try {
+      const response = await fetch("https://tbidoflowapi.azurewebsites.net/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        toast.success("Login successful!");
+
+        // Save JWT Token
+        localStorage.setItem("admin_token", data.token);
+
+        // Redirect to Admin Panel
+        setTimeout(() => {
+          window.location.href = "/panel";
+        }, 700);
+      } else {
+        toast.error(data.message || "Login failed.");
+      }
+    } catch (err) {
+      toast.error("Server error. Please try again.");
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex flex-col items-center justify-between py-8">
-
-      {/* Toastify Container */}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        pauseOnHover
-        theme="light"
-      />
+      
+      <ToastContainer position="top-center" autoClose={3000} />
 
       {/* Top Section */}
       <div className="w-full max-w-[360px] flex flex-col items-center text-center">
 
-        {/* Logo */}
         <img src={puplogo} alt="TBIDO Logo" className="h-14 mb-4" />
 
-        {/* Title */}
         <h1 className="text-lg font-extrabold bg-gradient-to-r from-[#6D0C22] to-[#0E386B] bg-clip-text text-transparent mb-1">
           Admin Login
         </h1>
@@ -83,20 +81,9 @@ export default function Admin() {
           Access administrative tools and system controls.
         </p>
 
-        {/* Form Fields */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            width: "100%",
-            maxWidth: "333px",
-            mb: 2,
-          }}
-        >
-          {/* Email Username */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%", maxWidth: "333px", mb: 2 }}>
           <TextField
-            label="Admin Username (Gmail)"
+            label="Admin Username"
             name="username"
             value={formData.username}
             onChange={handleChange}
@@ -104,7 +91,6 @@ export default function Admin() {
             fullWidth
           />
 
-          {/* Password Field with Eye Toggle */}
           <TextField
             label="Password"
             type={showPassword ? "text" : "password"}
@@ -116,10 +102,7 @@ export default function Admin() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
+                  <IconButton onClick={() => setShowPassword(!showPassword)}>
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
@@ -128,7 +111,6 @@ export default function Admin() {
           />
         </Box>
 
-        {/* Login Button */}
         <button
           onClick={handleLogin}
           disabled={loading}
@@ -138,6 +120,7 @@ export default function Admin() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+
       </div>
 
       {/* Powered By */}
@@ -148,6 +131,7 @@ export default function Admin() {
           <img src={flow} alt="Flow" className="h-4" />
         </div>
       </div>
+
     </div>
   );
 }

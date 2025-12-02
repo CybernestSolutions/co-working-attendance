@@ -8,6 +8,7 @@ import Admin from "./pages/Admin"; // ✅ ADD THIS
 import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Loader from "./components/Loader";
+import AdminPanel from "./pages/AdminPanel";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,7 @@ export default function App() {
 
         {/* ✅ NEW ADMIN ROUTE */}
         <Route path="/admin" element={<Admin />} />
+        <Route path="/panel" element={<AdminPanel />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
