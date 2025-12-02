@@ -52,7 +52,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const res = await fetch("https://tbidoflowapi.azurewebsites.net/announcements/all");
+        const res = await fetch("http://127.0.0.1:5000/announcements/all");
         const data = await res.json();
 
         if (data.status === "success") {

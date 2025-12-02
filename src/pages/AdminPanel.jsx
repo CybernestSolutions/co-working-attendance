@@ -42,7 +42,7 @@ export default function AdminPanel() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://tbidoflowapi.azurewebsites.net/analytics/logs", {
+      const response = await fetch("http://127.0.0.1:5000/analytics/logs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -111,7 +111,7 @@ export default function AdminPanel() {
     }
 
     try {
-      const res = await fetch("https://tbidoflowapi.azurewebsites.net/reports/send-range", {
+      const res = await fetch("http://127.0.0.1:5000/reports/send-range", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,7 +137,7 @@ export default function AdminPanel() {
   // ==============================
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("https://tbidoflowapi.azurewebsites.net/announcements/all");
+      const res = await fetch("http://127.0.0.1:5000/announcements/all");
       const data = await res.json();
 
       if (data.status === "success") {
@@ -154,7 +154,7 @@ export default function AdminPanel() {
     }
 
     try {
-      const res = await fetch("https://tbidoflowapi.azurewebsites.net/announcements/add", {
+      const res = await fetch("http://127.0.0.1:5000/announcements/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,7 +184,7 @@ export default function AdminPanel() {
     if (!window.confirm("Delete this announcement?")) return;
 
     try {
-      const res = await fetch(`https://tbidoflowapi.azurewebsites.net/announcements/delete/${id}`, {
+      const res = await fetch(`http://127.0.0.1:5000/announcements/delete/${id}`, {
         method: "DELETE"
       });
 
