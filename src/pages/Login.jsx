@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
-import SuccessModal from "../components/SucessModal"; // New modal import
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import SuccessModal from "../components/SucessModal";
 import puplogo from "../assets/images/LandingPage/puplogo.png";
 import cybernest from "../assets/images/LandingPage/cybernest.png";
 import flow from "../assets/images/LandingPage/flow.png";
+
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 export default function Login() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ using .env
+
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -19,12 +23,15 @@ export default function Login() {
     position: "",
     terms: false,
   });
+
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // state to control the new modal
-  const [sessionId, setSessionId] = useState(""); // store session_id for redirection
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sessionId, setSessionId] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Email passed from logbook
   const prefilledEmail = location.state?.email || "";
 
   const handleChange = (e) => {
@@ -46,23 +53,20 @@ export default function Login() {
     }
 
     setLoading(true);
+
     try {
-      const res = await axios.post(
-        "https://tbidoflowapi.azurewebsites.net/login",
-        {
-          email: formData.email || prefilledEmail,
-          name: formData.name,
-          office: formData.office,
-          position: formData.position,
-          terms: formData.terms,
-        }
-      );
+      const res = await axios.post(`${API_BASE}/auth/login`, {
+        email: formData.email || prefilledEmail,
+        name: formData.name,
+        office: formData.office,
+        position: formData.position,
+        terms: formData.terms,
+      });
 
       const { status, message, session_id } = res.data;
-
       setSessionId(session_id);
 
-      // Trigger the modal upon success
+      // Open success modal
       setIsModalOpen(true);
 
       if (status === "already_logged_in") {
@@ -70,11 +74,11 @@ export default function Login() {
       } else {
         toast.success("Successfully logged in!");
       }
-
     } catch (err) {
       console.error("Login failed:", err);
-      const errorMessage = err?.response?.data?.message || "Login failed. Please try again.";
-      alert(errorMessage);
+      const errorMessage =
+        err?.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -92,22 +96,23 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex flex-col items-center justify-between py-8">
-      {/* Top Section */}
       <ToastContainer position="top-center" autoClose={3000} />
 
+      {/* Form Container */}
       <div className="w-full max-w-[360px] flex flex-col items-center text-center">
         {/* Logo */}
         <img src={puplogo} alt="TBIDO Logo" className="h-15 mb-4" />
 
-        {/* Title with Gradient */}
+        {/* Title */}
         <h1 className="text-lg font-extrabold bg-gradient-to-r from-[#6D0C22] to-[#0E386B] bg-clip-text text-transparent mb-1">
           Login
         </h1>
         <p className="text-sm text-gray-600 mb-6">
-          View the current status and updates of <br /> your incubatee application.
+          View the current status and updates of <br /> your incubatee
+          application.
         </p>
 
-        {/* MUI Form Fields */}
+        {/* Input Fields */}
         <Box
           sx={{
             display: "flex",
@@ -118,21 +123,20 @@ export default function Login() {
             mb: 2,
           }}
         >
-          {/* Email Address */}
+          {/* Email */}
           <TextField
             type="email"
             name="email"
             label="Email Address"
             value={formData.email || prefilledEmail}
             onChange={handleChange}
-            disabled={!!prefilledEmail}
             size="small"
             fullWidth
+            disabled={!!prefilledEmail}
           />
 
-          {/* Full Name */}
+          {/* Name */}
           <TextField
-            type="text"
             name="name"
             label="Full Name"
             value={formData.name}
@@ -141,9 +145,8 @@ export default function Login() {
             fullWidth
           />
 
-          {/* Office */}
+          {/* Department */}
           <TextField
-            type="text"
             name="office"
             label="Course/Department/Office/Startup"
             value={formData.office}
@@ -154,7 +157,6 @@ export default function Login() {
 
           {/* Position */}
           <TextField
-            type="text"
             name="position"
             label="Position"
             value={formData.position}
@@ -164,7 +166,7 @@ export default function Login() {
           />
         </Box>
 
-        {/* Terms */}
+        {/* Terms Checkbox */}
         <label className="flex items-start text-left w-full max-w-[333px] text-xs text-gray-600 mb-5">
           <input
             type="checkbox"
@@ -181,8 +183,8 @@ export default function Login() {
             ,{" "}
             <a href="#" className="text-[#0E386B] font-semibold hover:underline">
               Terms and Conditions
-            </a>
-            , and{" "}
+            </a>{" "}
+            and{" "}
             <a href="#" className="text-[#0E386B] font-semibold hover:underline">
               Terms of Use
             </a>
@@ -190,7 +192,7 @@ export default function Login() {
           </span>
         </label>
 
-        {/* Next Button */}
+        {/* Login Button */}
         <button
           onClick={handleLogin}
           disabled={loading}

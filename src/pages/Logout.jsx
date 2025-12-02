@@ -17,6 +17,8 @@ import "react-toastify/dist/ReactToastify.css";
 import ThankYouModal from "../components/ThankYouModal";
 
 export default function Logout() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ .env enabled
+
   const navigate = useNavigate();
   const location = useLocation();
   const prefilledEmail = location.state?.email || "";
@@ -39,16 +41,18 @@ export default function Logout() {
     "Co-working Tables",
   ];
 
+  // Checkbox handler
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    setFormData((prevState) => {
-      const newResources = checked
-        ? [...prevState.resources, value]
-        : prevState.resources.filter((item) => item !== value);
-      return { ...prevState, resources: newResources };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      resources: checked
+        ? [...prev.resources, value]
+        : prev.resources.filter((item) => item !== value),
+    }));
   };
 
+  // Generic input handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -57,47 +61,51 @@ export default function Logout() {
     }));
   };
 
-const handleLogout = async () => {
-  const emailToUse = formData.email || prefilledEmail;
+  // Logout handler
+  const handleLogout = async () => {
+    const emailToUse = formData.email || prefilledEmail;
 
-  if (!emailToUse) {
-    toast.error("Email is required!");
-    return;
-  }
-
-  const allResources = [...formData.resources];
-  if (formData.otherResource.trim() !== "") {
-    allResources.push(formData.otherResource.trim());
-  }
-
-  //  Require at least one resource (including custom ones)
-  if (allResources.length === 0) {
-    toast.error("Please select or specify at least one resource used.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const res = await axios.post("https://tbidoflowapi.azurewebsites.net/logout", {
-      email: emailToUse,
-      resources: allResources.join(", "),
-      feedback: formData.feedback,
-    });
-
-    const { message, status } = res.data;
-
-    if (status === "already_logged_out") {
-      toast.success(message);
+    if (!emailToUse) {
+      toast.error("Email is required!");
+      return;
     }
 
-    setIsModalOpen(true);
-  } catch (err) {
-    console.error("Logout failed:", err);
-    toast.error("Logout failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+    // Merge checkbox + custom resource
+    const allResources = [...formData.resources];
+    if (formData.otherResource.trim() !== "") {
+      allResources.push(formData.otherResource.trim());
+    }
+
+    if (allResources.length === 0) {
+      toast.error("Please select or specify at least one resource used.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await axios.post(`${API_BASE}/auth/logout`, {
+        email: emailToUse,
+        resources: allResources.join(", "),
+        feedback: formData.feedback,
+      });
+
+      const { status, message } = res.data;
+
+      if (status === "already_logged_out") {
+        toast.success(message);
+      }
+
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error("Logout failed:", err);
+      toast.error("Logout failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Modal close → redirect home
   const closeModal = () => {
     setIsModalOpen(false);
     navigate("/");
@@ -105,20 +113,22 @@ const handleLogout = async () => {
 
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex flex-col items-center justify-between py-8">
-      {/* Toasts */}
+
       <ToastContainer position="top-center" autoClose={3000} />
 
       {/* Top Content */}
       <div className="w-full max-w-[360px] flex flex-col items-center text-center">
         <img src={puplogo} alt="TBIDO Logo" className="h-12 mb-4" />
+
         <h1 className="text-lg font-extrabold bg-gradient-to-r from-[#6D0C22] to-[#0E386B] bg-clip-text text-transparent mb-1">
           Logout
         </h1>
+
         <p className="text-sm text-gray-600 mb-6">
           View the current status and updates of <br /> your incubatee application.
         </p>
 
-        {/* Email Field */}
+        {/* Email */}
         <TextField
           type="email"
           name="email"
@@ -133,9 +143,10 @@ const handleLogout = async () => {
         />
 
         {/* Resources */}
-        <div className="w-full max-w-[333px] text-left text-sm font-semibold mb-1 font-[Montserrat]">
+        <div className="w-full max-w-[333px] text-left text-sm font-semibold mb-1">
           Resources Used:
         </div>
+
         <FormGroup className="w-full max-w-[333px]">
           {resourceOptions.map((option) => (
             <FormControlLabel
@@ -162,7 +173,6 @@ const handleLogout = async () => {
           size="small"
           fullWidth
           sx={{ mb: 2 }}
-          className="max-w-[333px] font-[Montserrat]"
         />
 
         {/* Feedback */}
@@ -175,7 +185,6 @@ const handleLogout = async () => {
           rows={3}
           fullWidth
           sx={{ mb: 2 }}
-          className="max-w-[333px] font-[Montserrat]"
         />
 
         {/* Logout Button */}
@@ -197,9 +206,9 @@ const handleLogout = async () => {
           <img src={cybernest} alt="Cybernest Solutions" className="h-12" />
           <img src={flow} alt="Flow" className="h-4" />
         </div>
-      </div>x``
+      </div>
 
-      {/* Reusable Thank You Modal */}
+      {/* Thank You Modal */}
       <ThankYouModal
         isOpen={isModalOpen}
         onClose={closeModal}

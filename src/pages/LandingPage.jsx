@@ -4,12 +4,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import coWorking from "../assets/images/LandingPage/co-working.svg";
-import venue from "../assets/images/LandingPage/venue.svg";
 import cybernest from "../assets/images/LandingPage/cybernest.png";
 import puplogo from "../assets/images/LandingPage/puplogo.png";
 import flow from "../assets/images/LandingPage/flow.png";
 
-import ErrorModal from "../components/Error";
 import WrongNetworkModal from "../components/WrongNetworkModal";
 
 export default function LandingPage() {
@@ -19,11 +17,15 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(false);
   const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
 
-  // ANNOUNCEMENTS
   const [announcements, setAnnouncements] = useState([]);
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  //--------------------------------------------------------
+  // ENV API BASE
+  //--------------------------------------------------------
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ Use .env
 
   //--------------------------------------------------------
   // HANDLE NETWORK CHECK
@@ -31,7 +33,7 @@ export default function LandingPage() {
   const handleCoworking = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://tbidoflowapi.azurewebsites.net/check-network");
+      const res = await axios.get(`${API_BASE}/network/check-network`);
 
       if (res.data?.connected) {
         navigate("/logbook");
@@ -52,15 +54,13 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/announcements/all");
+        const res = await fetch(`${API_BASE}/announcements/all`);
         const data = await res.json();
 
         if (data.status === "success") {
-          // Sort newest → oldest
           const sorted = data.announcements.sort(
             (a, b) => new Date(b.created_at) - new Date(a.created_at)
           );
-
           setAnnouncements(sorted);
         }
       } catch (err) {
@@ -69,65 +69,40 @@ export default function LandingPage() {
     };
 
     fetchAnnouncements();
-  }, []);
+  }, [API_BASE]);
 
   //--------------------------------------------------------
-  // HELPER: CATEGORY STYLE (auto-assigned)
+  // HELPER: STYLING BY CATEGORY
   //--------------------------------------------------------
   const getCategoryStyle = (title) => {
     const t = title.toLowerCase();
 
-    if (t.includes("network")) {
-      return {
-        bg: "bg-red-50",
-        border: "border-red-600",
-        icon: "⚠️",
-        text: "text-red-800"
-      };
-    }
-    if (t.includes("hour") || t.includes("schedule")) {
-      return {
-        bg: "bg-blue-50",
-        border: "border-blue-600",
-        icon: "🕒",
-        text: "text-blue-800"
-      };
-    }
-    if (t.includes("security") || t.includes("id")) {
-      return {
-        bg: "bg-purple-50",
-        border: "border-purple-600",
-        icon: "🔐",
-        text: "text-purple-800"
-      };
-    }
-    if (t.includes("meeting") || t.includes("room")) {
-      return {
-        bg: "bg-green-50",
-        border: "border-green-600",
-        icon: "📅",
-        text: "text-green-800"
-      };
-    }
-    return {
-      bg: "bg-amber-50",
-      border: "border-amber-600",
-      icon: "📢",
-      text: "text-amber-800"
-    };
+    if (t.includes("network"))
+      return { bg: "bg-red-50", border: "border-red-600", icon: "⚠️", text: "text-red-800" };
+
+    if (t.includes("hour") || t.includes("schedule"))
+      return { bg: "bg-blue-50", border: "border-blue-600", icon: "🕒", text: "text-blue-800" };
+
+    if (t.includes("security") || t.includes("id"))
+      return { bg: "bg-purple-50", border: "border-purple-600", icon: "🔐", text: "text-purple-800" };
+
+    if (t.includes("meeting") || t.includes("room"))
+      return { bg: "bg-green-50", border: "border-green-600", icon: "📅", text: "text-green-800" };
+
+    return { bg: "bg-amber-50", border: "border-amber-600", icon: "📢", text: "text-amber-800" };
   };
 
   //--------------------------------------------------------
-  // FORMAT DATE
+  // CURRENT DATE
   //--------------------------------------------------------
   const currentDate = new Date().toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric"
+    year: "numeric",
   });
 
   //--------------------------------------------------------
-  // RENDER
+  // UI RENDER
   //--------------------------------------------------------
   return (
     <div className="min-h-screen bg-white font-[Montserrat] flex justify-center">
@@ -157,9 +132,9 @@ export default function LandingPage() {
           <img src={coWorking} alt="Access Co-Working Space" className="w-full rounded-2xl" />
         </button>
 
-        {/* ANNOUNCEMENT WIDGET */}
+        {/* ANNOUNCEMENTS WIDGET */}
         <div className="w-full max-w-[333px] mt-3 rounded-2xl bg-gradient-to-br from-gray-50 to-white shadow-lg border border-gray-200 overflow-hidden">
-
+          
           {/* HEADER */}
           <div className="bg-gradient-to-r from-[#6D0C22] to-[#0E386B] px-4 py-3 flex justify-between items-center">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -176,7 +151,6 @@ export default function LandingPage() {
 
           {/* SCROLLABLE LIST */}
           <div className="overflow-y-auto max-h-[140px] p-4 space-y-3 custom-scrollbar">
-
             {announcements.length === 0 ? (
               <p className="text-center text-gray-500 text-sm">No announcements available.</p>
             ) : (
@@ -201,7 +175,7 @@ export default function LandingPage() {
             )}
           </div>
 
-          {/* FOOTER DATE */}
+          {/* FOOTER */}
           <div className="bg-gray-100 px-4 py-2 text-center border-t text-[10px] text-gray-500">
             Last updated: {currentDate}
           </div>
@@ -217,7 +191,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* NETWORK / ERROR MODALS */}
+      {/* NETWORK MODAL */}
       <WrongNetworkModal
         isOpen={isNetworkModalOpen}
         onClose={() => setIsNetworkModalOpen(false)}
@@ -227,7 +201,7 @@ export default function LandingPage() {
       {isAnnouncementModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-hidden">
-
+            
             <div className="bg-gradient-to-r from-[#6D0C22] to-[#0E386B] px-6 py-4 flex justify-between items-center">
               <h2 className="text-white font-bold text-lg">ANNOUNCEMENTS</h2>
               <button

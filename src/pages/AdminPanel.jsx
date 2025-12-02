@@ -27,6 +27,8 @@ export default function AdminPanel() {
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ Use .env backend URL
+
   // AUTH GUARD
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -42,7 +44,7 @@ export default function AdminPanel() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/analytics/logs", {
+      const response = await fetch(`${API_BASE}/analytics/logs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -99,7 +101,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchStats();
-    fetchAnnouncements(); // load announcements on page load
+    fetchAnnouncements();
   }, []);
 
   // ==============================
@@ -111,7 +113,7 @@ export default function AdminPanel() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/reports/send-range", {
+      const res = await fetch(`${API_BASE}/reports/send-range`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,7 +139,7 @@ export default function AdminPanel() {
   // ==============================
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/announcements/all");
+      const res = await fetch(`${API_BASE}/announcements/all`);
       const data = await res.json();
 
       if (data.status === "success") {
@@ -154,7 +156,7 @@ export default function AdminPanel() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/announcements/add", {
+      const res = await fetch(`${API_BASE}/announcements/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -184,7 +186,7 @@ export default function AdminPanel() {
     if (!window.confirm("Delete this announcement?")) return;
 
     try {
-      const res = await fetch(`http://127.0.0.1:5000/announcements/delete/${id}`, {
+      const res = await fetch(`${API_BASE}/announcements/delete/${id}`, {
         method: "DELETE"
       });
 

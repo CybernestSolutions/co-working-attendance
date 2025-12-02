@@ -9,9 +9,11 @@ import flow from "../assets/images/LandingPage/flow.png";
 import TextField from "@mui/material/TextField";
 
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LogBook() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ Using .env
+
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
@@ -19,6 +21,7 @@ export default function LogBook() {
     purpose: "",
     action: "",
   });
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -36,9 +39,10 @@ export default function LogBook() {
     }
 
     setLoading(true);
+
     try {
       const res = await axios.post(
-        "https://tbidoflowapi.azurewebsites.net/check-login-status",
+        `${API_BASE}/auth/check-login-status`, // ✅ UPDATED
         { email: formData.email },
         { headers: { "Cache-Control": "no-cache" } }
       );

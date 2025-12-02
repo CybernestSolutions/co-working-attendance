@@ -23,6 +23,8 @@ export default function Admin() {
 
   const [loading, setLoading] = useState(false);
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ Use .env
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -35,7 +37,7 @@ export default function Admin() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/admin/login", {
+      const response = await fetch(`${API_BASE}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -81,7 +83,16 @@ export default function Admin() {
           Access administrative tools and system controls.
         </p>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%", maxWidth: "333px", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: "100%",
+            maxWidth: "333px",
+            mb: 2,
+          }}
+        >
           <TextField
             label="Admin Username"
             name="username"
@@ -124,7 +135,7 @@ export default function Admin() {
       </div>
 
       {/* Powered By */}
-      <div className="flex flex-col items-center mt-8 space-y-1">
+      <div className="flex flex-col items-center mt-8 space-y=1">
         <p className="text-[10px] text-gray-400">Powered By:</p>
         <div className="flex items-center space-x-2">
           <img src={cybernest} alt="Cybernest Solutions" className="h-12" />
