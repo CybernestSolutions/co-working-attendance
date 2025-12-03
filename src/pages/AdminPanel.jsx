@@ -214,6 +214,20 @@ export default function AdminPanel() {
     );
   }
 
+  // ==============================
+  // TIME CONVERSION FUNCTION
+  // ==============================
+  const convertToTimezone = (dateStr) => {
+    const date = new Date(dateStr);
+    const options = {
+      timeZone: "Asia/Singapore", // UTC+8
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    return date.toLocaleTimeString("en-US", options);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 font-[Montserrat]">
       <ToastContainer position="top-center" autoClose={3000} />
@@ -310,6 +324,8 @@ export default function AdminPanel() {
               <tr className="bg-gray-200">
                 <th className="p-2 border">Email</th>
                 <th className="p-2 border">Name</th>
+                <th className="p-2 border">Office</th>
+                <th className="p-2 border">Position</th>
                 <th className="p-2 border">Time In</th>
                 <th className="p-2 border">Time Out</th>
               </tr>
@@ -320,8 +336,10 @@ export default function AdminPanel() {
                 <tr key={index} className="border-t">
                   <td className="p-2 border">{log.email}</td>
                   <td className="p-2 border">{log.name}</td>
-                  <td className="p-2 border">{log.timein}</td>
-                  <td className="p-2 border">{log.timeout}</td>
+                  <td className="p-2 border">{log.office}</td>
+                  <td className="p-2 border">{log.position}</td>
+                  <td className="p-2 border">{convertToTimezone(log.timein)}</td>
+                  <td className="p-2 border">{convertToTimezone(log.timeout)}</td>
                 </tr>
               ))}
             </tbody>
