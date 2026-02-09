@@ -22,6 +22,12 @@ export default function AdminPanel() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // Announcements State
+  const [announcements, setAnnouncements] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newBody, setNewBody] = useState("");
+
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   // ==============================
@@ -39,8 +45,6 @@ export default function AdminPanel() {
     if (!dateStr) return "N/A";
 
     // 1. Force UTC interpretation:
-    // If the string from DB looks like "2026-02-06T06:12:07" without 'Z', 
-    // Javascript treats it as local time. We append 'Z' to ensure it treats it as UTC.
     const strictDateStr = dateStr.endsWith("Z") ? dateStr : `${dateStr}Z`;
     const dateObj = new Date(strictDateStr);
 
@@ -125,8 +129,80 @@ export default function AdminPanel() {
     setLoading(false);
   };
 
+  // ==============================
+  // ANNOUNCEMENTS FUNCTIONS
+  // ==============================
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/announcements/all`);
+      const data = await res.json();
+
+      if (data.status === "success") {
+        setAnnouncements(data.announcements || []);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load announcements");
+    }
+  };
+
+  const saveAnnouncement = async () => {
+    if (!newTitle || !newBody) {
+      return toast.warning("Title and body are required.");
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/announcements/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: newTitle,
+          message: newBody,
+          author: "Admin"
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.status === "success") {
+        toast.success("Announcement added!");
+        setShowAddModal(false);
+        setNewTitle("");
+        setNewBody("");
+        fetchAnnouncements();
+      } else {
+        toast.error(data.message || "Failed to save.");
+      }
+    } catch (error) {
+      toast.error("Server error.");
+    }
+  };
+
+  const deleteAnnouncement = async (id) => {
+    if (!window.confirm("Delete this announcement?")) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/announcements/delete/${id}`, {
+        method: "DELETE"
+      });
+
+      const data = await res.json();
+
+      if (data.status === "success") {
+        toast.success("Announcement deleted.");
+        fetchAnnouncements();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Server error.");
+    }
+  };
+
+  // INITIAL LOAD
   useEffect(() => {
     fetchStats();
+    fetchAnnouncements(); // Load announcements on mount
   }, []);
 
   // ==============================
@@ -280,6 +356,47 @@ export default function AdminPanel() {
         </div>
       </div>
 
+      {/* ANNOUNCEMENTS SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow mx-4 my-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-bold text-lg">Announcements</h2>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-[#6D0C22] text-white px-4 py-2 rounded-lg hover:opacity-90"
+          >
+            + Add Announcement
+          </button>
+        </div>
+
+        {announcements.length === 0 ? (
+          <p className="text-gray-500">No announcements available.</p>
+        ) : (
+          <ul className="space-y-4">
+            {announcements.map((a) => (
+              <li
+                key={a._id}
+                className="p-4 border rounded-lg flex justify-between items-center"
+              >
+                <div>
+                  <h3 className="font-semibold text-lg">{a.title}</h3>
+                  <p className="text-gray-600 text-sm">{a.message}</p>
+                  <span className="text-xs text-gray-400">
+                    Posted: {new Date(a.created_at).toLocaleString()}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => deleteAnnouncement(a._id)}
+                  className="text-red-600 font-semibold hover:underline"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       {/* EMAIL EXPORT BUTTON */}
       <div className="p-4 mx-4 mb-10">
         <button
@@ -294,6 +411,47 @@ export default function AdminPanel() {
           {sending ? "Sending Report..." : "Email Attendance Report"}
         </button>
       </div>
+
+      {/* ADD ANNOUNCEMENT MODAL */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-96">
+            <h2 className="font-bold text-lg mb-4">Create Announcement</h2>
+
+            <input
+              type="text"
+              className="w-full p-2 border rounded-lg mb-3"
+              placeholder="Title"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+
+            <textarea
+              className="w-full p-2 border rounded-lg mb-3"
+              placeholder="Write announcement..."
+              rows={4}
+              value={newBody}
+              onChange={(e) => setNewBody(e.target.value)}
+            />
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={saveAnnouncement}
+                className="px-4 py-2 rounded-lg bg-[#6D0C22] text-white hover:opacity-90"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
