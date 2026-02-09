@@ -457,7 +457,7 @@ export default function AdminPanel() {
 }
 
 // ==============================
-// STAT CARD COMPONENT
+// STAT CARD COMPONENTs
 // ==============================
 function StatCard({ label, value }) {
   return (
